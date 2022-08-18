@@ -7,7 +7,7 @@ import (
 const networkBaseURL = "networks/isolated"
 
 type (
-	NetworkResponse struct {
+	NetworkEntity struct {
 		ID            string   `json:"id,omitempty"`
 		Name          string   `json:"name,omitempty"`
 		LocationID    string   `json:"location_id,omitempty"`
@@ -19,18 +19,18 @@ type (
 		Created       string   `json:"created,omitempty"`
 	}
 
-	networkResponseWrap struct {
-		IsolatedNetwork *NetworkResponse `json:"isolated_network,omitempty"`
+	networkEntityWrap struct {
+		IsolatedNetwork *NetworkEntity `json:"isolated_network,omitempty"`
 	}
 )
 
-func (c *SSClient) GetNetwork(networkID string) (*NetworkResponse, error) {
+func (c *SSClient) GetNetwork(networkID string) (*NetworkEntity, error) {
 	url := getNetworkURL(networkID)
-	resp, err := makeRequest(c.client, url, methodGet, nil, &networkResponseWrap{})
+	resp, err := makeRequest(c.client, url, methodGet, nil, &networkEntityWrap{})
 	if err != nil {
 		return nil, err
 	}
-	return resp.(*networkResponseWrap).IsolatedNetwork, nil
+	return resp.(*networkEntityWrap).IsolatedNetwork, nil
 }
 
 func (c *SSClient) CreateNetwork(
@@ -60,7 +60,7 @@ func (c *SSClient) CreateNetworkAndWait(
 	description string,
 	networkPrefix string,
 	mask int,
-) (*NetworkResponse, error) {
+) (*NetworkEntity, error) {
 	taskWrap, err := c.CreateNetwork(name, locationID, description, networkPrefix, mask)
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func (c *SSClient) UpdateNetwork(networkID, name, description string) (*TaskIDWr
 	return resp.(*TaskIDWrap), nil
 }
 
-func (c *SSClient) UpdateNetworkAndWait(networkID, name, description string) (*NetworkResponse, error) {
+func (c *SSClient) UpdateNetworkAndWait(networkID, name, description string) (*NetworkEntity, error) {
 	taskWrap, err := c.UpdateNetwork(networkID, name, description)
 	if err != nil {
 		return nil, err
@@ -95,7 +95,7 @@ func (c *SSClient) DeleteNetwork(networkID string) error {
 	return err
 }
 
-func (c *SSClient) waitNetwork(taskID string) (*NetworkResponse, error) {
+func (c *SSClient) waitNetwork(taskID string) (*NetworkEntity, error) {
 	task, err := c.waitTaskCompletion(taskID)
 	if err != nil {
 		return nil, err
