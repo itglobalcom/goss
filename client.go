@@ -39,7 +39,7 @@ func NewClient(key string, host string) (*SSClient, error) {
 	client.SetHeader("X-API-KEY", key)
 
 	baseURL := fmt.Sprintf("%s/%s", host, "api/v1/")
-	client.SetHostURL(baseURL)
+	client.SetBaseURL(baseURL)
 
 	return &SSClient{client, key, host}, nil
 }
