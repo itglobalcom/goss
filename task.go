@@ -27,6 +27,7 @@ type (
 		SnapshotID int    `json:"snapshot_id,omitempty"`
 		DomainName string `json:"domain_id,omitempty"`
 		RecordID   int    `json:"record_id,omitempty"`
+		GatewayID  string `json:"gateway_id,omitempty"`
 	}
 
 	taskResponseWrap struct {
