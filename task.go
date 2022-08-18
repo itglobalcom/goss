@@ -25,7 +25,7 @@ type (
 		VolumeID   int    `json:"volume_id,omitempty"`
 		NicID      int    `json:"nic_id,omitempty"`
 		SnapshotID int    `json:"snapshot_id,omitempty"`
-		DomainID   string `json:"domain_id,omitempty"`
+		DomainName string `json:"domain_id,omitempty"`
 		RecordID   int    `json:"record_id,omitempty"`
 	}
 

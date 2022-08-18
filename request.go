@@ -48,7 +48,7 @@ func makeRequest(
 	url string,
 	method methodType,
 	payload interface{},
-	res interface{},
+	result interface{},
 ) (interface{}, error) {
 	request := client.R().
 		SetError(&ErrorBodyResponse{}).
@@ -56,8 +56,8 @@ func makeRequest(
 			"User-Agent": userAgent,
 		})
 
-	if res != nil {
-		request = request.SetResult(res)
+	if result != nil {
+		request = request.SetResult(result)
 	}
 	if payload != nil {
 		request = request.SetBody(payload)
