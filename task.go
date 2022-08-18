@@ -62,13 +62,13 @@ func (c *SSClient) waitTaskCompletion(taskID string) (*TaskResponse, error) {
 		if task.IsCompleted == "Completed" {
 			return task, nil
 		} else if task.IsCompleted == "Failed" {
-			return nil, fmt.Errorf("Task '%s' failed", task.ID)
+			return nil, fmt.Errorf("task '%s' failed", task.ID)
 
 		} else {
 			log.Default().Printf("[TRACE] Task isn't completed: %#v", task)
 		}
 		if time.Now().Sub(begin) > duration {
-			return nil, fmt.Errorf("Task wasn't complete for %f secs", duration.Seconds())
+			return nil, fmt.Errorf("task wasn't complete for %f secs", duration.Seconds())
 		}
 	}
 
@@ -97,7 +97,7 @@ func (c *SSClient) waitServerActive(serverID string) (*ServerResponse, error) {
 			log.Default().Printf("[TRACE] Server isn't active: %#v", server)
 		}
 		if time.Now().Sub(begin) > duration {
-			return nil, fmt.Errorf("Server wasn't active for %f secs", duration.Seconds())
+			return nil, fmt.Errorf("server wasn't active for %f secs", duration.Seconds())
 		}
 	}
 
