@@ -20,8 +20,6 @@ const (
 	methodOptions
 )
 
-const userAgent = "goss"
-
 func (m methodType) String() string {
 	switch m {
 	case methodGet:
@@ -50,11 +48,7 @@ func makeRequest(
 	payload interface{},
 	result interface{},
 ) (interface{}, error) {
-	request := client.R().
-		SetError(&ErrorBodyResponse{}).
-		SetHeaders(map[string]string{
-			"User-Agent": userAgent,
-		})
+	request := client.R().SetError(&ErrorBodyResponse{})
 
 	if result != nil {
 		request = request.SetResult(result)

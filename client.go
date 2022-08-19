@@ -6,6 +6,8 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
+const defaultUserAgent string = "goss"
+
 var HOST_MAP = map[string]string{
 	"02": "https://api.serverspace.by",
 	"04": "https://api.serverspace.io",
@@ -38,10 +40,14 @@ func NewClient(key string, host string, ua string) (*SSClient, error) {
 
 	client := resty.New()
 	client.SetHeader("X-API-KEY", key)
-	client.SetHeader("User-Agent", ua)
+
+	userAgent := fmt.Sprintf("%s/%s", defaultUserAgent, ua)
+	client.SetHeader("User-Agent", userAgent)
 
 	baseURL := fmt.Sprintf("%s/%s", host, "api/v1/")
 	client.SetBaseURL(baseURL)
 
-	return &SSClient{client, key, host, ua}, nil
+	c := &SSClient{client, key, host, userAgent}
+
+	return c, nil
 }
