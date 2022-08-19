@@ -41,7 +41,7 @@ func NewClient(key string, host string, ua string) (*SSClient, error) {
 	client := resty.New()
 	client.SetHeader("X-API-KEY", key)
 
-	userAgent := fmt.Sprintf("%s/%s", defaultUserAgent, ua)
+	userAgent := fmt.Sprintf("%s %s", defaultUserAgent, ua)
 	client.SetHeader("User-Agent", userAgent)
 
 	baseURL := fmt.Sprintf("%s/%s", host, "api/v1/")
