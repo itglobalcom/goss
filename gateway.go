@@ -102,7 +102,7 @@ func (c *SSClient) CreateGateway(
 ) (*TaskIDWrap, error) {
 
 	payload := map[string]interface{}{
-		"locaton_id":     locationID,
+		"location_id":    locationID,
 		"name":           name,
 		"bandwidth_mbps": bandwidthMbps,
 		"network_ids":    networkIDs,
