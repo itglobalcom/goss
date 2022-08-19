@@ -17,12 +17,13 @@ var HOST_MAP = map[string]string{
 }
 
 type SSClient struct {
-	client *resty.Client
-	Key    string
-	Host   string
+	client    *resty.Client
+	Key       string
+	Host      string
+	UserAgent string
 }
 
-func NewClient(key string, host string) (*SSClient, error) {
+func NewClient(key string, host string, ua string) (*SSClient, error) {
 	if host == "" {
 		if len(key) < 2 {
 			return nil, NewWrongKeyFormatError(nil)
@@ -37,9 +38,10 @@ func NewClient(key string, host string) (*SSClient, error) {
 
 	client := resty.New()
 	client.SetHeader("X-API-KEY", key)
+	client.SetHeader("User-Agent", ua)
 
 	baseURL := fmt.Sprintf("%s/%s", host, "api/v1/")
 	client.SetBaseURL(baseURL)
 
-	return &SSClient{client, key, host}, nil
+	return &SSClient{client, key, host, ua}, nil
 }
