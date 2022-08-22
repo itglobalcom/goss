@@ -6,7 +6,7 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-const defaultUserAgent string = "goss"
+const userAgentPrefix string = "goss"
 
 var HOST_MAP = map[string]string{
 	"02": "https://api.serverspace.by",
@@ -22,10 +22,10 @@ type SSClient struct {
 	client    *resty.Client
 	Key       string
 	Host      string
-	UserAgent string
+	UserAgent *string
 }
 
-func NewClient(key string, host string, ua string) (*SSClient, error) {
+func NewClient(key string, host string, agent *string) (*SSClient, error) {
 	if host == "" {
 		if len(key) < 2 {
 			return nil, NewWrongKeyFormatError(nil)
@@ -41,13 +41,18 @@ func NewClient(key string, host string, ua string) (*SSClient, error) {
 	client := resty.New()
 	client.SetHeader("X-API-KEY", key)
 
-	userAgent := fmt.Sprintf("%s %s", defaultUserAgent, ua)
-	client.SetHeader("User-Agent", userAgent)
+	userAgentHeader := userAgentPrefix
+
+	if agent != nil {
+		userAgentHeader = fmt.Sprintf("%s/%s", userAgentPrefix, *agent)
+	}
+
+	client.SetHeader("User-Agent", userAgentHeader)
 
 	baseURL := fmt.Sprintf("%s/%s", host, "api/v1/")
 	client.SetBaseURL(baseURL)
 
-	c := &SSClient{client, key, host, userAgent}
+	c := &SSClient{client, key, host, &userAgentHeader}
 
 	return c, nil
 }
