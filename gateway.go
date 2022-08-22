@@ -54,6 +54,7 @@ type (
 		NetworkIDs    []string        `json:"network_ids,omitempty"`
 		NATRules      []*NATRule      `json:"nat_rules,omitempty"`
 		FirewallRules []*FirewallRule `json:"firewall_rules,omitempty"`
+		State         string          `json:"state,omitempty"`
 	}
 
 	gatewayResponseWrap struct {
@@ -65,11 +66,11 @@ type (
 	}
 
 	firewallRuleListResponseWrap struct {
-		FirewallRules *[]FirewallRule `json:"firewall_rules,omitempty"`
+		FirewallRules []*FirewallRule `json:"firewall_rules,omitempty"`
 	}
 
 	NATRuleListResponseWrap struct {
-		NATRules *[]NATRule `json:"nat_rules,omitempty"`
+		NATRules []*NATRule `json:"nat_rules,omitempty"`
 	}
 )
 
@@ -167,7 +168,7 @@ func (c *SSClient) EditGatewayBandwidth(gatewayID string, bandwidthMbps int) (*T
 	return resp.(*TaskIDWrap), nil
 }
 
-func (c *SSClient) GetFirewallRules(gatewayID string) (*[]FirewallRule, error) {
+func (c *SSClient) GetFirewallRules(gatewayID string) ([]*FirewallRule, error) {
 
 	url := fmt.Sprintf("%s/%s/firewall", gatewayBaseURL, gatewayID)
 
@@ -179,7 +180,7 @@ func (c *SSClient) GetFirewallRules(gatewayID string) (*[]FirewallRule, error) {
 	return resp.(*firewallRuleListResponseWrap).FirewallRules, nil
 }
 
-func (c *SSClient) EditFirewallRules(gatewayID string, firewallRules []FirewallRule) (*TaskIDWrap, error) {
+func (c *SSClient) EditFirewallRules(gatewayID string, firewallRules []*FirewallRule) (*TaskIDWrap, error) {
 
 	url := fmt.Sprintf("%s/%s/firewall", gatewayBaseURL, gatewayID)
 	payload := map[string]interface{}{
@@ -194,7 +195,7 @@ func (c *SSClient) EditFirewallRules(gatewayID string, firewallRules []FirewallR
 	return resp.(*TaskIDWrap), nil
 }
 
-func (c *SSClient) EditFirewallRulesAndWait(gatewayID string, firewallRules []FirewallRule) (*GatewayEntity, error) {
+func (c *SSClient) EditFirewallRulesAndWait(gatewayID string, firewallRules []*FirewallRule) (*GatewayEntity, error) {
 
 	taskWrap, err := c.EditFirewallRules(gatewayID, firewallRules)
 
@@ -204,7 +205,7 @@ func (c *SSClient) EditFirewallRulesAndWait(gatewayID string, firewallRules []Fi
 	return c.waitGateway(taskWrap.ID)
 }
 
-func (c *SSClient) GetNATRules(gatewayID string) (*[]NATRule, error) {
+func (c *SSClient) GetNATRules(gatewayID string) ([]*NATRule, error) {
 
 	url := fmt.Sprintf("%s/%s/nat", gatewayBaseURL, gatewayID)
 
@@ -216,7 +217,7 @@ func (c *SSClient) GetNATRules(gatewayID string) (*[]NATRule, error) {
 	return resp.(*NATRuleListResponseWrap).NATRules, nil
 }
 
-func (c *SSClient) EditNATRules(gatewayID string, NATRules []NATRule) (*TaskIDWrap, error) {
+func (c *SSClient) EditNATRules(gatewayID string, NATRules []*NATRule) (*TaskIDWrap, error) {
 
 	url := fmt.Sprintf("%s/%s/nat", gatewayBaseURL, gatewayID)
 	payload := map[string]interface{}{
@@ -231,7 +232,7 @@ func (c *SSClient) EditNATRules(gatewayID string, NATRules []NATRule) (*TaskIDWr
 	return resp.(*TaskIDWrap), nil
 }
 
-func (c *SSClient) EditNATRulesAndWait(gatewayID string, NATRules []NATRule) (*GatewayEntity, error) {
+func (c *SSClient) EditNATRulesAndWait(gatewayID string, NATRules []*NATRule) (*GatewayEntity, error) {
 
 	taskWrap, err := c.EditNATRules(gatewayID, NATRules)
 

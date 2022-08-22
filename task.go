@@ -19,15 +19,17 @@ type (
 		Completed   string `json:"completed,omitempty"`
 		IsCompleted string `json:"is_completed,omitempty"`
 
-		ServerID   string `json:"server_id,omitempty"`
-		LocationID string `json:"location_id,omitempty"`
-		NetworkID  string `json:"network_id,omitempty"`
-		VolumeID   int    `json:"volume_id,omitempty"`
-		NicID      int    `json:"nic_id,omitempty"`
-		SnapshotID int    `json:"snapshot_id,omitempty"`
-		DomainName string `json:"domain_id,omitempty"`
-		RecordID   int    `json:"record_id,omitempty"`
-		GatewayID  string `json:"gateway_id,omitempty"`
+		ServerID              string `json:"server_id,omitempty"`
+		LocationID            string `json:"location_id,omitempty"`
+		NetworkID             string `json:"network_id,omitempty"`
+		VolumeID              int    `json:"volume_id,omitempty"`
+		NicID                 int    `json:"nic_id,omitempty"`
+		SnapshotID            int    `json:"snapshot_id,omitempty"`
+		DomainName            string `json:"domain_id,omitempty"`
+		RecordID              int    `json:"record_id,omitempty"`
+		GatewayID             string `json:"gateway_id,omitempty"`
+		KubernetesClusterID   string `json:"cluster_id,omitempty"`
+		KubernetesNodeGroupID string `json:"node_group_id,omitempty"`
 	}
 
 	taskResponseWrap struct {
@@ -68,7 +70,7 @@ func (c *SSClient) waitTaskCompletion(taskID string) (*TaskResponse, error) {
 		} else {
 			log.Default().Printf("[TRACE] Task isn't completed: %#v", task)
 		}
-		if time.Now().Sub(begin) > duration {
+		if time.Since(begin) > duration {
 			return nil, fmt.Errorf("task wasn't complete for %f secs", duration.Seconds())
 		}
 	}
@@ -97,7 +99,7 @@ func (c *SSClient) waitServerActive(serverID string) (*ServerResponse, error) {
 		} else {
 			log.Default().Printf("[TRACE] Server isn't active: %#v", server)
 		}
-		if time.Now().Sub(begin) > duration {
+		if time.Since(begin) > duration {
 			return nil, fmt.Errorf("server wasn't active for %f secs", duration.Seconds())
 		}
 	}
