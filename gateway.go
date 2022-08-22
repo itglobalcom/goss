@@ -54,6 +54,7 @@ type (
 		NetworkIDs    []string        `json:"network_ids,omitempty"`
 		NATRules      []*NATRule      `json:"nat_rules,omitempty"`
 		FirewallRules []*FirewallRule `json:"firewall_rules,omitempty"`
+		State         string          `json:"state,omitempty"`
 	}
 
 	gatewayResponseWrap struct {
