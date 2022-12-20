@@ -11,7 +11,7 @@ type (
 	}
 
 	imageListResponseWrap struct {
-		Images []*ImageResponse `json:"locations,omitempty"`
+		Images []*ImageResponse `json:"images,omitempty"`
 	}
 )
 
