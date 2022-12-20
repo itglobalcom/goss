@@ -22,6 +22,10 @@ type (
 	networkEntityWrap struct {
 		IsolatedNetwork *NetworkEntity `json:"isolated_network,omitempty"`
 	}
+
+	networkListEntityWrap struct {
+		IsolatedNetworks []*NetworkEntity `json:"isolated_networks,omitempty"`
+	}
 )
 
 func (c *SSClient) GetNetwork(networkID string) (*NetworkEntity, error) {
@@ -105,4 +109,12 @@ func (c *SSClient) waitNetwork(taskID string) (*NetworkEntity, error) {
 
 func getNetworkURL(networkID string) string {
 	return fmt.Sprintf("%s/%s", networkBaseURL, networkID)
+}
+
+func (c *SSClient) GetNetworkList() ([]*NetworkEntity, error) {
+	resp, err := makeRequest(c.client, networkBaseURL, methodGet, nil, &networkListEntityWrap{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*networkListEntityWrap).IsolatedNetworks, nil
 }
