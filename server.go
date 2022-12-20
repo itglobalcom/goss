@@ -32,6 +32,10 @@ type (
 	serverResponseWrap struct {
 		Server *ServerResponse `json:"server,omitempty"`
 	}
+
+	serverListResponseWrap struct {
+		Servers []*ServerResponse `json:"servers,omitempty"`
+	}
 )
 
 func (c *SSClient) GetServer(serverID string) (*ServerResponse, error) {
@@ -123,11 +127,10 @@ func (c *SSClient) waitServer(taskID string) (*ServerResponse, error) {
 	return c.GetServer(task.ServerID)
 }
 
-func (c *SSClient) List() ([]*ServerResponse, error) {
-	resp, err := makeRequest(c.client, serverBaseURL, methodGet, nil, &[]serverResponseWrap{})
+func (c *SSClient) GetServerList() ([]*ServerResponse, error) {
+	resp, err := makeRequest(c.client, serverBaseURL, methodGet, nil, &serverListResponseWrap{})
 	if err != nil {
 		return nil, err
 	}
-	fmt.Print(resp)
-	return nil, nil
+	return resp.(*serverListResponseWrap).Servers, nil
 }
