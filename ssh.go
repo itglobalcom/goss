@@ -16,6 +16,9 @@ type (
 	sshResponseWrap struct {
 		SSHKey *SSHResponse `json:"ssh_key,omitempty"`
 	}
+	sshListResponseWrap struct {
+		SSHKeys []*SSHResponse `json:"ssh_keys,omitempty"`
+	}
 )
 
 func (c *SSClient) GetSSHKey(sshID int) (*SSHResponse, error) {
@@ -47,4 +50,12 @@ func (c *SSClient) DeleteSSHKey(sshID int) error {
 	url := fmt.Sprintf("%s/%d", sshBaseURL, sshID)
 	_, err := makeRequest(c.client, url, methodDelete, nil, nil)
 	return err
+}
+
+func (c *SSClient) GetSSHKeyList() ([]*SSHResponse, error) {
+	resp, err := makeRequest(c.client, sshBaseURL, methodGet, nil, &sshListResponseWrap{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*sshListResponseWrap).SSHKeys, nil
 }
