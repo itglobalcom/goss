@@ -122,3 +122,12 @@ func (c *SSClient) waitServer(taskID string) (*ServerResponse, error) {
 	}
 	return c.GetServer(task.ServerID)
 }
+
+func (c *SSClient) List() ([]*ServerResponse, error) {
+	resp, err := makeRequest(c.client, serverBaseURL, methodGet, nil, &[]serverResponseWrap{})
+	if err != nil {
+		return nil, err
+	}
+	fmt.Print(resp)
+	return nil, nil
+}
