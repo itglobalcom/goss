@@ -17,6 +17,7 @@ type (
 		ServerIDS     []string `json:"server_ids,omitempty"`
 		State         string   `json:"state,omitempty"`
 		Created       string   `json:"created,omitempty"`
+		Tags          []string `json:"tags,omitempty"`
 	}
 
 	networkEntityWrap struct {
