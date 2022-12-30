@@ -27,6 +27,7 @@ type (
 		Volumes    []*VolumeEntity `json:"volumes,omitempty"`
 		NICS       []*NICEntity    `json:"nics,omitempty"`
 		SSHKeyIDS  []int           `json:"ssh_key_ids,omitempty"`
+		Tags       []string        `json:"tags,omitempty"`
 	}
 
 	serverResponseWrap struct {
