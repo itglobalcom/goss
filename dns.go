@@ -60,6 +60,14 @@ type (
 	domainListResponseWrap struct {
 		Domains []*DomainResponse `json:"domains,omitempty"`
 	}
+
+	recordResponseWrap struct {
+		Record *DomainRecord `json:"record,omitempty"`
+	}
+
+	recordListResponseWrap struct {
+		Records []*DomainRecord `json:"records,omitempty"`
+	}
 )
 
 func (c *SSClient) GetDomain(domainName string) (*DomainResponse, error) {
@@ -117,7 +125,36 @@ func (c *SSClient) DeleteDomain(domainName string) error {
 	return err
 }
 
+
+func (c *SSClient) GetDomainList() ([]*DomainResponse, error) {
+	resp, err := makeRequest(c.client, domainBaseURL, methodGet, nil, &domainListResponseWrap{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*domainListResponseWrap).Domains, nil
+}
+
+
 // -------- DOMAIN RECORDS --------
+
+func (c *SSClient) GetRecord(recordID string, domainName string) (*DomainRecord, error) {
+	url := fmt.Sprintf("%s/%s/records/%s", domainBaseURL, domainName, recordID)
+	resp, err := makeRequest(c.client, url, methodGet, nil, &recordResponseWrap{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*recordResponseWrap).Record, nil
+}
+
+
+func (c *SSClient) GetRecordList(domainName string) ([]*DomainRecord, error) {
+	url := fmt.Sprintf("%s/%s/records", domainBaseURL, domainName)
+	resp, err := makeRequest(c.client, url, methodGet, nil, &recordListResponseWrap{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*recordListResponseWrap).Records, nil
+}
 
 func (c *SSClient) CreateRecord(
 	domainName string,
@@ -217,13 +254,4 @@ func (c *SSClient) waitRecordDelition(domainName string, recordId int) (*DomainR
 		return nil, fmt.Errorf("domain record wasn't removed for %f secs", duration.Seconds())
 	}
 	return domain, err
-}
-
-
-func (c *SSClient) GetDomainList() ([]*DomainResponse, error) {
-	resp, err := makeRequest(c.client, domainBaseURL, methodGet, nil, &domainListResponseWrap{})
-	if err != nil {
-		return nil, err
-	}
-	return resp.(*domainListResponseWrap).Domains, nil
 }
