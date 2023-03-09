@@ -56,6 +56,10 @@ type (
 	domainResponseWrap struct {
 		Domain *DomainResponse `json:"domain,omitempty"`
 	}
+
+	domainListResponseWrap struct {
+		Domains []*DomainResponse `json:"domains,omitempty"`
+	}
 )
 
 func (c *SSClient) GetDomain(domainName string) (*DomainResponse, error) {
@@ -213,4 +217,13 @@ func (c *SSClient) waitRecordDelition(domainName string, recordId int) (*DomainR
 		return nil, fmt.Errorf("domain record wasn't removed for %f secs", duration.Seconds())
 	}
 	return domain, err
+}
+
+
+func (c *SSClient) GetDomainList() ([]*DomainResponse, error) {
+	resp, err := makeRequest(c.client, domainBaseURL, methodGet, nil, &domainListResponseWrap{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*domainListResponseWrap).Domains, nil
 }
