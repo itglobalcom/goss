@@ -3,6 +3,7 @@ package goss
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -29,7 +30,7 @@ const (
 )
 
 type (
-	DomainRecord struct {
+	DomainRecordResponse struct {
 		ID             int          `json:"id"`
 		Name           string       `json:"name"`
 		Type           RecordType   `json:"type,omitempty"`
@@ -50,7 +51,7 @@ type (
 	DomainResponse struct {
 		Name        string          `json:"name,omitempty"`
 		IsDelegated bool            `json:"is_delegated,omitempty"`
-		Records     []*DomainRecord `json:"records,omitempty"`
+		Records     []*DomainRecordResponse `json:"records,omitempty"`
 	}
 
 	domainResponseWrap struct {
@@ -62,11 +63,11 @@ type (
 	}
 
 	recordResponseWrap struct {
-		Record *DomainRecord `json:"record,omitempty"`
+		Record *DomainRecordResponse `json:"record,omitempty"`
 	}
 
 	recordListResponseWrap struct {
-		Records []*DomainRecord `json:"records,omitempty"`
+		Records []*DomainRecordResponse `json:"records,omitempty"`
 	}
 )
 
@@ -137,7 +138,7 @@ func (c *SSClient) GetDomainList() ([]*DomainResponse, error) {
 
 // -------- DOMAIN RECORDS --------
 
-func (c *SSClient) GetRecord(recordID string, domainName string) (*DomainRecord, error) {
+func (c *SSClient) GetRecord(recordID string, domainName string) (*DomainRecordResponse, error) {
 	url := fmt.Sprintf("%s/%s/records/%s", domainBaseURL, domainName, recordID)
 	resp, err := makeRequest(c.client, url, methodGet, nil, &recordResponseWrap{})
 	if err != nil {
@@ -147,7 +148,7 @@ func (c *SSClient) GetRecord(recordID string, domainName string) (*DomainRecord,
 }
 
 
-func (c *SSClient) GetRecordList(domainName string) ([]*DomainRecord, error) {
+func (c *SSClient) GetRecordList(domainName string) ([]*DomainRecordResponse, error) {
 	url := fmt.Sprintf("%s/%s/records", domainBaseURL, domainName)
 	resp, err := makeRequest(c.client, url, methodGet, nil, &recordListResponseWrap{})
 	if err != nil {
@@ -215,7 +216,7 @@ func (c *SSClient) CreateRecordAndWait(
 	port int,
 	target string,
 	ttl string,
-) (*DomainResponse, error) {
+) (*DomainRecordResponse, error) {
 	taskWrap, err := c.CreateRecord(domainName, name, rec_type, ip, 
 		mail_host, priority, canonical_name, name, text, protocol, 
 		service, weight, port, target, ttl)
@@ -223,7 +224,7 @@ func (c *SSClient) CreateRecordAndWait(
 	if err != nil {
 		return nil, err
 	}
-	return c.waitDomain(taskWrap.ID)
+	return c.waitDomainRecord(taskWrap.ID)
 }
 
 func (c *SSClient) UpdateRecord(
@@ -286,14 +287,14 @@ func (c *SSClient) UpdateRecordAndWait(
 	port int,
 	target string,
 	ttl string,
-) (*DomainResponse, error) {
+) (*DomainRecordResponse, error) {
 	taskWrap, err := c.UpdateRecord(domainName, name, rec_type, ip, 
 		mail_host, priority, canonical_name, name, text, protocol, 
 		service, weight, port, target, ttl)
 	if err != nil {
 		return nil, err
 	}
-	return c.waitDomain(taskWrap.ID)
+	return c.waitDomainRecord(taskWrap.ID)
 }
 
 func (c *SSClient) DeleteRecord(domainName string, recordId int) error {
@@ -312,6 +313,14 @@ func (c *SSClient) waitDomain(taskID string) (*DomainResponse, error) {
 		return nil, err
 	}
 	return c.GetDomain(task.DomainName)
+}
+
+func (c *SSClient) waitDomainRecord(taskID string) (*DomainRecordResponse, error) {
+	task, err := c.waitTaskCompletion(taskID)
+	if err != nil {
+		return nil, err
+	}
+	return c.GetRecord(strconv.Itoa(task.RecordID), task.DomainName)
 }
 
 func (c *SSClient) waitRecordDelition(domainName string, recordId int) (*DomainResponse, error) {
