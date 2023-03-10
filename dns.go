@@ -297,8 +297,8 @@ func (c *SSClient) UpdateRecordAndWait(
 	return c.waitDomainRecord(taskWrap.ID)
 }
 
-func (c *SSClient) DeleteRecord(domainName string, recordId int) error {
-	url := fmt.Sprintf("%s/%s/records/%d", domainBaseURL, domainName, recordId)
+func (c *SSClient) DeleteRecord(domainName string, recordId string) error {
+	url := fmt.Sprintf("%s/%s/records/%s", domainBaseURL, domainName, recordId)
 	_, err := makeRequest(c.client, url, methodDelete, nil, &TaskIDWrap{})
 	if err != nil {
 		return err
@@ -323,7 +323,7 @@ func (c *SSClient) waitDomainRecord(taskID string) (*DomainRecordResponse, error
 	return c.GetRecord(strconv.Itoa(task.RecordID), task.DomainName)
 }
 
-func (c *SSClient) waitRecordDelition(domainName string, recordId int) (*DomainResponse, error) {
+func (c *SSClient) waitRecordDelition(domainName string, recordId string) (*DomainResponse, error) {
 	const duration = defaultTaskCompletionDuration
 	begin := time.Now()
 	ticker := time.NewTicker(5 * time.Second)
@@ -341,7 +341,7 @@ func (c *SSClient) waitRecordDelition(domainName string, recordId int) (*DomainR
 			return nil, err
 		}
 		for _, record := range domain.Records {
-			if record.ID == recordId {
+			if strconv.Itoa(record.ID) == recordId {
 				recordWadDeleted = false
 				break
 			}
