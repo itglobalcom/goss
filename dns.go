@@ -3,7 +3,6 @@ package goss
 import (
 	"fmt"
 	"log"
-	"strconv"
 	"time"
 )
 
@@ -49,8 +48,8 @@ type (
 	}
 
 	DomainResponse struct {
-		Name        string          `json:"name,omitempty"`
-		IsDelegated bool            `json:"is_delegated,omitempty"`
+		Name        string                  `json:"name,omitempty"`
+		IsDelegated bool                    `json:"is_delegated,omitempty"`
 		Records     []*DomainRecordResponse `json:"records,omitempty"`
 	}
 
@@ -126,7 +125,6 @@ func (c *SSClient) DeleteDomain(domainName string) error {
 	return err
 }
 
-
 func (c *SSClient) GetDomainList() ([]*DomainResponse, error) {
 	resp, err := makeRequest(c.client, domainBaseURL, methodGet, nil, &domainListResponseWrap{})
 	if err != nil {
@@ -135,18 +133,16 @@ func (c *SSClient) GetDomainList() ([]*DomainResponse, error) {
 	return resp.(*domainListResponseWrap).Domains, nil
 }
 
-
 // -------- DOMAIN RECORDS --------
 
-func (c *SSClient) GetRecord(recordID string, domainName string) (*DomainRecordResponse, error) {
-	url := fmt.Sprintf("%s/%s/records/%s", domainBaseURL, domainName, recordID)
+func (c *SSClient) GetRecord(recordID int, domainName string) (*DomainRecordResponse, error) {
+	url := fmt.Sprintf("%s/%s/records/%d", domainBaseURL, domainName, recordID)
 	resp, err := makeRequest(c.client, url, methodGet, nil, &recordResponseWrap{})
 	if err != nil {
 		return nil, err
 	}
 	return resp.(*recordResponseWrap).Record, nil
 }
-
 
 func (c *SSClient) GetRecordList(domainName string) ([]*DomainRecordResponse, error) {
 	url := fmt.Sprintf("%s/%s/records", domainBaseURL, domainName)
@@ -177,20 +173,20 @@ func (c *SSClient) CreateRecord(
 	url := fmt.Sprintf("%s/%s/records", domainBaseURL, domainName)
 
 	payload := map[string]interface{}{
-		"name":        name,
-		"type": rec_type,
-		"ip":    ip,
-		"mail_host":         mail_host,
-		"priority":      priority,
-		"canonical_name":     canonical_name,
-		"name_server_host":    name_server_host,
-		"text": text,
-		"protocol": protocol,
-		"service": service,
-		"weight": weight,
-		"port": port,
-		"target": target,
-		"ttl": ttl,
+		"name":             name,
+		"type":             rec_type,
+		"ip":               ip,
+		"mail_host":        mail_host,
+		"priority":         priority,
+		"canonical_name":   canonical_name,
+		"name_server_host": name_server_host,
+		"text":             text,
+		"protocol":         protocol,
+		"service":          service,
+		"weight":           weight,
+		"port":             port,
+		"target":           target,
+		"ttl":              ttl,
 	}
 
 	resp, err := makeRequest(c.client, url, methodPost, payload, &TaskIDWrap{})
@@ -217,10 +213,10 @@ func (c *SSClient) CreateRecordAndWait(
 	target string,
 	ttl string,
 ) (*DomainRecordResponse, error) {
-	taskWrap, err := c.CreateRecord(domainName, name, rec_type, ip, 
-		mail_host, priority, canonical_name, name, text, protocol, 
+	taskWrap, err := c.CreateRecord(domainName, name, rec_type, ip,
+		mail_host, priority, canonical_name, name, text, protocol,
 		service, weight, port, target, ttl)
-		
+
 	if err != nil {
 		return nil, err
 	}
@@ -247,22 +243,21 @@ func (c *SSClient) UpdateRecord(
 	url := fmt.Sprintf("%s/%s/records", domainBaseURL, domainName)
 
 	payload := map[string]interface{}{
-		"name":        name,
-		"type": rec_type,
-		"ip":    ip,
-		"mail_host":         mail_host,
-		"priority":      priority,
-		"canonical_name":     canonical_name,
-		"name_server_host":    name_server_host,
-		"text": text,
-		"protocol": protocol,
-		"service": service,
-		"weight": weight,
-		"port": port,
-		"target": target,
-		"ttl": ttl,
+		"name":             name,
+		"type":             rec_type,
+		"ip":               ip,
+		"mail_host":        mail_host,
+		"priority":         priority,
+		"canonical_name":   canonical_name,
+		"name_server_host": name_server_host,
+		"text":             text,
+		"protocol":         protocol,
+		"service":          service,
+		"weight":           weight,
+		"port":             port,
+		"target":           target,
+		"ttl":              ttl,
 	}
-
 
 	resp, err := makeRequest(c.client, url, methodPut, payload, &TaskIDWrap{})
 	if err != nil {
@@ -288,8 +283,8 @@ func (c *SSClient) UpdateRecordAndWait(
 	target string,
 	ttl string,
 ) (*DomainRecordResponse, error) {
-	taskWrap, err := c.UpdateRecord(domainName, name, rec_type, ip, 
-		mail_host, priority, canonical_name, name, text, protocol, 
+	taskWrap, err := c.UpdateRecord(domainName, name, rec_type, ip,
+		mail_host, priority, canonical_name, name, text, protocol,
 		service, weight, port, target, ttl)
 	if err != nil {
 		return nil, err
@@ -297,8 +292,8 @@ func (c *SSClient) UpdateRecordAndWait(
 	return c.waitDomainRecord(taskWrap.ID)
 }
 
-func (c *SSClient) DeleteRecord(domainName string, recordId string) error {
-	url := fmt.Sprintf("%s/%s/records/%s", domainBaseURL, domainName, recordId)
+func (c *SSClient) DeleteRecord(domainName string, recordId int) error {
+	url := fmt.Sprintf("%s/%s/records/%d", domainBaseURL, domainName, recordId)
 	_, err := makeRequest(c.client, url, methodDelete, nil, &TaskIDWrap{})
 	if err != nil {
 		return err
@@ -320,10 +315,10 @@ func (c *SSClient) waitDomainRecord(taskID string) (*DomainRecordResponse, error
 	if err != nil {
 		return nil, err
 	}
-	return c.GetRecord(strconv.Itoa(task.RecordID), task.DomainName)
+	return c.GetRecord(task.RecordID, task.DomainName)
 }
 
-func (c *SSClient) waitRecordDelition(domainName string, recordId string) (*DomainResponse, error) {
+func (c *SSClient) waitRecordDelition(domainName string, recordId int) (*DomainResponse, error) {
 	const duration = defaultTaskCompletionDuration
 	begin := time.Now()
 	ticker := time.NewTicker(5 * time.Second)
@@ -341,7 +336,7 @@ func (c *SSClient) waitRecordDelition(domainName string, recordId string) (*Doma
 			return nil, err
 		}
 		for _, record := range domain.Records {
-			if strconv.Itoa(record.ID) == recordId {
+			if record.ID == recordId {
 				recordWadDeleted = false
 				break
 			}
