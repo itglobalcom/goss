@@ -32,7 +32,7 @@ const (
 type (
 	DomainRecordInput struct {
 		Name           string        `json:"name"`
-		Type           *RecordType   `json:"type,omitempty"`
+		Type           RecordType    `json:"type"`
 		IP             *string       `json:"ip,omitempty"`
 		MailHost       *string       `json:"mail_host,omitempty"`
 		Priority       *int          `json:"priority,omitempty"`
