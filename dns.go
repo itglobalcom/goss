@@ -194,10 +194,11 @@ func (c *SSClient) CreateRecordAndWait(
 }
 
 func (c *SSClient) UpdateRecord(
+	recordID string,
 	domainName string,
 	record DomainRecordInput,
 ) (*TaskIDWrap, error) {
-	url := fmt.Sprintf("%s/%s/records", domainBaseURL, domainName)
+	url := fmt.Sprintf("%s/%s/records/%s", domainBaseURL, domainName, recordID)
 	resp, err := makeRequest(c.client, url, methodPut, record, &TaskIDWrap{})
 	if err != nil {
 		return nil, err
@@ -206,10 +207,11 @@ func (c *SSClient) UpdateRecord(
 }
 
 func (c *SSClient) UpdateRecordAndWait(
+	recordID string,
 	domainName string,
 	record DomainRecordInput,
 ) (*DomainRecordResponse, error) {
-	taskWrap, err := c.UpdateRecord(domainName, record)
+	taskWrap, err := c.UpdateRecord(recordID, domainName, record)
 	if err != nil {
 		return nil, err
 	}
