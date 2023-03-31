@@ -30,6 +30,22 @@ const (
 )
 
 type (
+	DomainRecordInput struct {
+		Name           string        `json:"name"`
+		Type           *RecordType   `json:"type,omitempty"`
+		IP             *string       `json:"ip,omitempty"`
+		MailHost       *string       `json:"mail_host,omitempty"`
+		Priority       *int          `json:"priority,omitempty"`
+		CanonicalName  *string       `json:"canonical_name,omitempty"`
+		NameServerHost *string       `json:"name_server_host,omitempty"`
+		Text           *string       `json:"text,omitempty"`
+		Protocol       *ProtocolType `json:"protocol,omitempty"`
+		Service        *string       `json:"service,omitempty"`
+		Weight         *int          `json:"weight,omitempty"`
+		Port           *int          `json:"port,omitempty"`
+		Target         *string       `json:"target,omitempty"`
+		TTL            *string       `json:"ttl,omitempty"`
+	}
 	DomainRecordResponse struct {
 		ID             int          `json:"id"`
 		Name           string       `json:"name"`
@@ -156,41 +172,10 @@ func (c *SSClient) GetRecordList(domainName string) ([]*DomainRecordResponse, er
 
 func (c *SSClient) CreateRecord(
 	domainName string,
-	name string,
-	rec_type string,
-	ip string,
-	mail_host string,
-	priority int,
-	canonical_name string,
-	name_server_host string,
-	text string,
-	protocol string,
-	service string,
-	weight int,
-	port int,
-	target string,
-	ttl string,
+	record DomainRecordInput,
 ) (*TaskIDWrap, error) {
 	url := fmt.Sprintf("%s/%s/records", domainBaseURL, domainName)
-
-	payload := map[string]interface{}{
-		"name":             name,
-		"type":             rec_type,
-		"ip":               ip,
-		"mail_host":        mail_host,
-		"priority":         priority,
-		"canonical_name":   canonical_name,
-		"name_server_host": name_server_host,
-		"text":             text,
-		"protocol":         protocol,
-		"service":          service,
-		"weight":           weight,
-		"port":             port,
-		"target":           target,
-		"ttl":              ttl,
-	}
-
-	resp, err := makeRequest(c.client, url, methodPost, payload, &TaskIDWrap{})
+	resp, err := makeRequest(c.client, url, methodPost, record, &TaskIDWrap{})
 	if err != nil {
 		return nil, err
 	}
@@ -199,25 +184,9 @@ func (c *SSClient) CreateRecord(
 
 func (c *SSClient) CreateRecordAndWait(
 	domainName string,
-	name string,
-	rec_type string,
-	ip string,
-	mail_host string,
-	priority int,
-	canonical_name string,
-	name_server_host string,
-	text string,
-	protocol string,
-	service string,
-	weight int,
-	port int,
-	target string,
-	ttl string,
+	record DomainRecordInput,
 ) (*DomainRecordResponse, error) {
-	taskWrap, err := c.CreateRecord(domainName, name, rec_type, ip,
-		mail_host, priority, canonical_name, name_server_host, text, protocol,
-		service, weight, port, target, ttl)
-
+	taskWrap, err := c.CreateRecord(domainName, record)
 	if err != nil {
 		return nil, err
 	}
@@ -226,41 +195,10 @@ func (c *SSClient) CreateRecordAndWait(
 
 func (c *SSClient) UpdateRecord(
 	domainName string,
-	name string,
-	rec_type string,
-	ip string,
-	mail_host string,
-	priority int,
-	canonical_name string,
-	name_server_host string,
-	text string,
-	protocol string,
-	service string,
-	weight int,
-	port int,
-	target string,
-	ttl string,
+	record DomainRecordInput,
 ) (*TaskIDWrap, error) {
 	url := fmt.Sprintf("%s/%s/records", domainBaseURL, domainName)
-
-	payload := map[string]interface{}{
-		"name":             name,
-		"type":             rec_type,
-		"ip":               ip,
-		"mail_host":        mail_host,
-		"priority":         priority,
-		"canonical_name":   canonical_name,
-		"name_server_host": name_server_host,
-		"text":             text,
-		"protocol":         protocol,
-		"service":          service,
-		"weight":           weight,
-		"port":             port,
-		"target":           target,
-		"ttl":              ttl,
-	}
-
-	resp, err := makeRequest(c.client, url, methodPut, payload, &TaskIDWrap{})
+	resp, err := makeRequest(c.client, url, methodPut, record, &TaskIDWrap{})
 	if err != nil {
 		return nil, err
 	}
@@ -269,24 +207,9 @@ func (c *SSClient) UpdateRecord(
 
 func (c *SSClient) UpdateRecordAndWait(
 	domainName string,
-	name string,
-	rec_type string,
-	ip string,
-	mail_host string,
-	priority int,
-	canonical_name string,
-	name_server_host string,
-	text string,
-	protocol string,
-	service string,
-	weight int,
-	port int,
-	target string,
-	ttl string,
+	record DomainRecordInput,
 ) (*DomainRecordResponse, error) {
-	taskWrap, err := c.UpdateRecord(domainName, name, rec_type, ip,
-		mail_host, priority, canonical_name, name_server_host, text, protocol,
-		service, weight, port, target, ttl)
+	taskWrap, err := c.UpdateRecord(domainName, record)
 	if err != nil {
 		return nil, err
 	}
