@@ -47,21 +47,21 @@ type (
 		TTL            *string       `json:"ttl,omitempty"`
 	}
 	DomainRecordResponse struct {
-		ID             int          `json:"id"`
-		Name           string       `json:"name"`
-		Type           RecordType   `json:"type,omitempty"`
-		IP             string       `json:"ip,omitempty"`
-		MailHost       string       `json:"mail_host,omitempty"`
-		Priority       int          `json:"priority,omitempty"`
-		CanonicalName  string       `json:"canonical_name,omitempty"`
-		NameServerHost string       `json:"name_server_host,omitempty"`
-		Text           string       `json:"text,omitempty"`
-		Protocol       ProtocolType `json:"protocol,omitempty"`
-		Service        string       `json:"service,omitempty"`
-		Weight         int          `json:"weight,omitempty"`
-		Port           int          `json:"port,omitempty"`
-		Target         string       `json:"target,omitempty"`
-		TTL            string       `json:"ttl,omitempty"`
+		ID             int           `json:"id"`
+		Name           string        `json:"name"`
+		Type           *RecordType   `json:"type,omitempty"`
+		IP             *string       `json:"ip,omitempty"`
+		MailHost       *string       `json:"mail_host,omitempty"`
+		Priority       *int          `json:"priority,omitempty"`
+		CanonicalName  *string       `json:"canonical_name,omitempty"`
+		NameServerHost *string       `json:"name_server_host,omitempty"`
+		Text           *string       `json:"text,omitempty"`
+		Protocol       *ProtocolType `json:"protocol,omitempty"`
+		Service        *string       `json:"service,omitempty"`
+		Weight         *int          `json:"weight,omitempty"`
+		Port           *int          `json:"port,omitempty"`
+		Target         *string       `json:"target,omitempty"`
+		TTL            *string       `json:"ttl,omitempty"`
 	}
 
 	DomainResponse struct {
