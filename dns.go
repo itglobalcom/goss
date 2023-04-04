@@ -30,7 +30,7 @@ const (
 )
 
 type (
-	DomainRecordInput struct {
+	DomainRecord struct {
 		Name           string        `json:"name"`
 		Type           RecordType    `json:"type"`
 		IP             *string       `json:"ip,omitempty"`
@@ -47,21 +47,8 @@ type (
 		TTL            *string       `json:"ttl,omitempty"`
 	}
 	DomainRecordResponse struct {
-		ID             int           `json:"id"`
-		Name           string        `json:"name"`
-		Type           *RecordType   `json:"type,omitempty"`
-		IP             *string       `json:"ip,omitempty"`
-		MailHost       *string       `json:"mail_host,omitempty"`
-		Priority       *int          `json:"priority,omitempty"`
-		CanonicalName  *string       `json:"canonical_name,omitempty"`
-		NameServerHost *string       `json:"name_server_host,omitempty"`
-		Text           *string       `json:"text,omitempty"`
-		Protocol       *ProtocolType `json:"protocol,omitempty"`
-		Service        *string       `json:"service,omitempty"`
-		Weight         *int          `json:"weight,omitempty"`
-		Port           *int          `json:"port,omitempty"`
-		Target         *string       `json:"target,omitempty"`
-		TTL            *string       `json:"ttl,omitempty"`
+		ID int `json:"id"`
+		DomainRecord
 	}
 
 	DomainResponse struct {
@@ -172,7 +159,7 @@ func (c *SSClient) GetRecordList(domainName string) ([]*DomainRecordResponse, er
 
 func (c *SSClient) CreateRecord(
 	domainName string,
-	record DomainRecordInput,
+	record DomainRecord,
 ) (*TaskIDWrap, error) {
 	url := fmt.Sprintf("%s/%s/records", domainBaseURL, domainName)
 	resp, err := makeRequest(c.client, url, methodPost, record, &TaskIDWrap{})
@@ -184,7 +171,7 @@ func (c *SSClient) CreateRecord(
 
 func (c *SSClient) CreateRecordAndWait(
 	domainName string,
-	record DomainRecordInput,
+	record DomainRecord,
 ) (*DomainRecordResponse, error) {
 	taskWrap, err := c.CreateRecord(domainName, record)
 	if err != nil {
@@ -196,7 +183,7 @@ func (c *SSClient) CreateRecordAndWait(
 func (c *SSClient) UpdateRecord(
 	recordID string,
 	domainName string,
-	record DomainRecordInput,
+	record DomainRecord,
 ) (*TaskIDWrap, error) {
 	url := fmt.Sprintf("%s/%s/records/%s", domainBaseURL, domainName, recordID)
 	resp, err := makeRequest(c.client, url, methodPut, record, &TaskIDWrap{})
@@ -209,7 +196,7 @@ func (c *SSClient) UpdateRecord(
 func (c *SSClient) UpdateRecordAndWait(
 	recordID string,
 	domainName string,
-	record DomainRecordInput,
+	record DomainRecord,
 ) (*DomainRecordResponse, error) {
 	taskWrap, err := c.UpdateRecord(recordID, domainName, record)
 	if err != nil {
