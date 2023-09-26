@@ -112,6 +112,15 @@ func getNetworkURL(networkID string) string {
 	return fmt.Sprintf("%s/%s", networkBaseURL, networkID)
 }
 
+func (c *SSClient) TagNetwork(networkID string) error {
+	payload := map[string]interface{}{
+		"value": "terraform",
+	}
+	url := fmt.Sprintf("%s/tags", getNetworkURL(networkID))
+	_, err := makeRequest(c.client, url, methodPost, payload, nil)
+	return err
+}
+
 func (c *SSClient) GetNetworkList() ([]*NetworkEntity, error) {
 	resp, err := makeRequest(c.client, networkBaseURL, methodGet, nil, &networkListEntityWrap{})
 	if err != nil {
