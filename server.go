@@ -27,10 +27,15 @@ type (
 		Volumes    []*VolumeEntity `json:"volumes,omitempty"`
 		NICS       []*NICEntity    `json:"nics,omitempty"`
 		SSHKeyIDS  []int           `json:"ssh_key_ids,omitempty"`
+		Tags       []string        `json:"tags,omitempty"`
 	}
 
 	serverResponseWrap struct {
 		Server *ServerResponse `json:"server,omitempty"`
+	}
+
+	serverListResponseWrap struct {
+		Servers []*ServerResponse `json:"servers,omitempty"`
 	}
 )
 
@@ -121,4 +126,12 @@ func (c *SSClient) waitServer(taskID string) (*ServerResponse, error) {
 		return nil, err
 	}
 	return c.GetServer(task.ServerID)
+}
+
+func (c *SSClient) GetServerList() ([]*ServerResponse, error) {
+	resp, err := makeRequest(c.client, serverBaseURL, methodGet, nil, &serverListResponseWrap{})
+	if err != nil {
+		return nil, err
+	}
+	return resp.(*serverListResponseWrap).Servers, nil
 }
