@@ -1,4 +1,4 @@
-module gitlab.itglobal.com/b2c/goss
+module github.com/itglobalcom/goss
 
 go 1.19
 
