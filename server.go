@@ -128,6 +128,15 @@ func (c *SSClient) waitServer(taskID string) (*ServerResponse, error) {
 	return c.GetServer(task.ServerID)
 }
 
+func (c *SSClient) TagServer(serverID string) error {
+	payload := map[string]interface{}{
+		"value": "terraform",
+	}
+	url := fmt.Sprintf("%s/%s/tags", serverBaseURL, serverID)
+	_, err := makeRequest(c.client, url, methodPost, payload, nil)
+	return err
+}
+
 func (c *SSClient) GetServerList() ([]*ServerResponse, error) {
 	resp, err := makeRequest(c.client, serverBaseURL, methodGet, nil, &serverListResponseWrap{})
 	if err != nil {
