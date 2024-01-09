@@ -21,7 +21,11 @@ type (
 		ID         string          `json:"id,omitempty"`
 		Name       string          `json:"name,omitempty"`
 		LocationID string          `json:"location_id,omitempty"`
+		ImageID    string          `json:"image_id,omitempty"`
 		State      string          `json:"state,omitempty"`
+		Login      string          `json:"login,omitempty"`
+		Password   string          `json:"password,omitempty"`
+		Created    string          `json:"created,omitempty"`
 		CPU        int             `json:"cpu,omitempty"`
 		RAM        int             `json:"ram_mb,omitempty"`
 		Volumes    []*VolumeEntity `json:"volumes,omitempty"`
@@ -29,7 +33,6 @@ type (
 		SSHKeyIDS  []int           `json:"ssh_key_ids,omitempty"`
 		Tags       []string        `json:"tags,omitempty"`
 	}
-
 	serverResponseWrap struct {
 		Server *ServerResponse `json:"server,omitempty"`
 	}
