@@ -12,10 +12,7 @@ type (
 		SizeMB int    `json:"size_mb,omitempty"`
 	}
 
-	NetworkData struct {
-		NetworkID string `json:"network_id,omitempty"`
-		Bandwidth int    `json:"bandwidth_mbps,omitempty"`
-	}
+	NetworkData map[string]interface{}
 
 	ServerResponse struct {
 		ID         string          `json:"id,omitempty"`
